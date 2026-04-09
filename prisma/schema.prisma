@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  Completed
+  Failed
+}
+
+enum Severity {
+  None
+  Low
+  Medium
+  High
+  Critical
+}
+
+model User {
+  id           String       @id @default(uuid())
+  name         String
+  email        String       @unique
+  passwordHash String
+  analyses     Analysis[]   // 1-to-many
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Analysis {
+  id              String           @id @default(uuid())
+  pcbName         String
+  analyzedAt      DateTime         @default(now()) // replaces createdAt
+  numberOfDefects Int              @default(0)
+  severity        Severity           // e.g., "Low", "Medium", "High"
+  status          Status           // e.g., "Failed", "Complete"
+  processingTime  Float
+  imageUrl        String           // Original Image
+  overview        String           // General Overview
+  technical       String           // Technical Overview
+  labelVisualization String   // Label Visualization Image URL
+  dotVisualization   String   // Dot Visualization Image URL
+  rawResponse     Json
+
+  // Relations
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  defects         DetectedDefect[] // 1-to-many
+}
+
+model DetectedDefect {
+  id              String   @id @default(uuid())
+  name            String   // class or label
+  location        String  // location of the defect
+  description     String   // description of the defect
+  repairSteps     Json     // array of steps
+  requiredTools   Json     // array of tools
+  estimatedRepairTime   String
+  severity        Severity   // added: e.g., "Low", "Critical"
+
+  x               Float
+  y               Float
+  width           Float
+  height          Float
+  confidence      Float
+
+  // Relations
+  analysisId      String
+  analysis        Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+}

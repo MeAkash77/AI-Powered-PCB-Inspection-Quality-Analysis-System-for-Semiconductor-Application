@@ -26,7 +26,7 @@ PCB Defect Detector is a web application designed to analyze and detect defects 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Twilight-Techy/pcb-defect-detector.git
+   git clone https://github.com/MeAkash77/AI-Powered-PCB-Inspection-Quality-Analysis-System-for-Semiconductor-Applications.git
    cd pcb-defect-detector
    ```
 

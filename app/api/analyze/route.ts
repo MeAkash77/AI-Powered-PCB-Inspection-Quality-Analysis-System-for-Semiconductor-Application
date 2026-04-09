@@ -18,9 +18,11 @@ export async function POST(req: Request) {
         if (!file) return NextResponse.json({ error: "No file uploaded" }, { status: 400 })
         if (!userId) return NextResponse.json({ error: "No user ID provided" }, { status: 401 })
 
+        // ✅ 1. Main upload - FIXED with token
         const blob = await put(file.name, file, {
             access: "public",
             addRandomSuffix: true,
+            token: process.env.BLOB_READ_WRITE_TOKEN, // ✅ ADD THIS
         })
 
         imageUrl = blob.url
@@ -82,14 +84,18 @@ export async function POST(req: Request) {
     const labelFile = base64ToFile(labelVisualization.value, "label-visualization.png")
     const dotFile = base64ToFile(dotVisualization.value, "dot-visualization.png")
 
+    // ✅ 2. Label visualization - FIXED with token
     const labelBlob = await put(labelFile.name, labelFile, {
         access: "public",
         addRandomSuffix: true,
+        token: process.env.BLOB_READ_WRITE_TOKEN, // ✅ ADD THIS
     })
 
+    // ✅ 3. Dot visualization - FIXED with token
     const dotBlob = await put(dotFile.name, dotFile, {
         access: "public",
         addRandomSuffix: true,
+        token: process.env.BLOB_READ_WRITE_TOKEN, // ✅ ADD THIS
     })
 
     // Use simple rules for analysis severity
